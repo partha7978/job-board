@@ -1,0 +1,35 @@
+.main__container {
+  height: auto;
+  width: 100vw;
+  /* background-color: rgb(231, 180, 113); */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+header.title {
+  text-align: center;
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header.title > h1 {
+  margin: 0;
+  padding: 0;
+  letter-spacing: 2px;
+}
+
+@media only screen and (max-width: 650px) {
+  .main__container {
+    height: auto;
+  }
+  header.title {
+    height: 200px;
+  }
+
+  header.title > h1 {
+    font-size: 1.5rem;
+  }
+}
