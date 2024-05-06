@@ -46,7 +46,6 @@ const useJobSearch = (limit) => {
         setJobData(data);
         setHasMore(data.totalCount);
         setLoading(false);
-        console.log(data, "jobData");
       })
       .catch((error) => setError(error));
   }, [limit]);

@@ -5,11 +5,12 @@
   justify-content: center;
   align-items: start;
   flex-direction: column;
-  width: 95vw; /* Updated width */
+  width: 95vw;
   padding: 1rem;
   margin: 0 2rem;
   box-sizing: border-box;
   border-radius: 10px;
+  box-shadow: 12px 12px 48px 0px rgba(0,0,0,0.1);
 }
 
 .filter-item > button {
@@ -18,6 +19,10 @@
   border: 1px solid rgb(170, 170, 170);
   border-radius: 4px;
   padding: 0.6rem;
+  cursor: pointer;
+}
+.filter-item > button:hover {
+ border: 1px solid rgb(0, 0, 0);
 }
 @media only screen and (max-width: 650px) {
   .header__container {

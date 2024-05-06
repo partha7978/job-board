@@ -13,6 +13,7 @@ import { RiMoneyRupeeCircleLine } from "react-icons/ri";
 import { GrLocation } from "react-icons/gr";
 import { RiHome7Line } from "react-icons/ri";
 import { useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
 const style = {
   position: "absolute",
@@ -26,20 +27,90 @@ const style = {
   p: 4,
 };
 
-const Jobs = ({ mount }) => {
-  const dispatch = useDispatch();
+const CardContentData = ({ job }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  console.log("mount");
+
+  return (
+    <>
+      <div className="job-body">
+        <CardContent
+          className="job-card-header"
+          sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
+        >
+          <div className="job-logo">
+            <img src={job.logoUrl} alt="logo" />
+          </div>
+          <div className="job__header">
+            <span>{job.companyName}</span>
+            <span>{job.jobRole}</span>
+            <div className="job__header-subText">
+              <span>
+                <RiMoneyRupeeCircleLine />
+                {job.minJdSalary
+                  ? `${job.minJdSalary / 10}-${job.maxJdSalary / 10} LPA`
+                  : `${job.maxJdSalary / 10} LPA`}
+              </span>
+              <span>
+                {job.location === "remote" ? (
+                  <>
+                    <RiHome7Line /> {job.location}
+                  </>
+                ) : (
+                  <>
+                    <GrLocation /> {job.location}
+                  </>
+                )}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+        <CardContent className="job-card-body" sx={{ margin: 0, padding: 0 }}>
+          <div className="job-desc">
+            <p>About us</p>
+            <span>{job.jobDetailsFromCompany?.slice(0, 100)}...</span>
+            <button onClick={handleOpen}>View Job Desc</button>
+          </div>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Job Description
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {job.jobDetailsFromCompany}
+              </Typography>
+            </Box>
+          </Modal>
+        </CardContent>
+      </div>
+      <CardActions
+        className="apply-btn"
+        sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
+      >
+        <a href={job.jdLink} target="_blank">
+          <Button size="small" sx={{ color: "#fff" }}>
+            Click Here to Apply
+          </Button>
+        </a>
+      </CardActions>
+    </>
+  );
+};
+
+const Jobs = () => {
   const [limit, setLimit] = useState(10);
 
-  const { loading, error, hasMore, jobData } = useJobSearch(limit);
+  const { loading, hasMore, jobData } = useJobSearch(limit);
   const extractMore = hasMore <= jobData?.jdList?.length ? false : true;
 
   const filteredData = useSelector((state) => state.jobs.filteredItems);
   const showFiltered = filteredData[filteredData.length - 1];
-  console.log(showFiltered, "showFiltered");
   const observer = useRef();
   const lastJobElementRef = useCallback(
     (node) => {
@@ -57,10 +128,7 @@ const Jobs = ({ mount }) => {
     },
     [loading, hasMore]
   );
-
-  useEffect(() => {
-    
-  }, [mount])
+  
 
   return (
     <>
@@ -70,85 +138,7 @@ const Jobs = ({ mount }) => {
             return (
               <React.Fragment key={job + index}>
                 <Card className="job-card">
-                  <div className="job-body">
-                    <CardContent
-                      className="job-card-header"
-                      sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
-                    >
-                      <div className="job-logo">
-                        <img src={job.logoUrl} alt="logo" />
-                      </div>
-                      <div className="job__header">
-                        <span>{job.companyName}</span>
-                        <span>{job.jobRole}</span>
-                        <div className="job__header-subText">
-                          <span>
-                            <RiMoneyRupeeCircleLine />
-                            {job.minJdSalary
-                              ? `${job.minJdSalary / 10}-${
-                                  job.maxJdSalary / 10
-                                } LPA`
-                              : `${job.maxJdSalary / 10} LPA`}
-                          </span>
-                          <span>
-                            {job.location === "remote" ? (
-                              <>
-                                <RiHome7Line /> {job.location}
-                              </>
-                            ) : (
-                              <>
-                                <GrLocation /> {job.location}
-                              </>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardContent
-                      className="job-card-body"
-                      sx={{ margin: 0, padding: 0 }}
-                    >
-                      <div className="job-desc">
-                        <p>About us</p>
-                        <span>
-                          {job?.jobDetailsFromCompany?.slice(0, 100)}...
-                        </span>
-                        <button onClick={handleOpen}>View Job Desc</button>
-                      </div>
-                      <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                      >
-                        <Box sx={style}>
-                          <Typography
-                            id="modal-modal-title"
-                            variant="h6"
-                            component="h2"
-                          >
-                            Job Description
-                          </Typography>
-                          <Typography
-                            id="modal-modal-description"
-                            sx={{ mt: 2 }}
-                          >
-                            {job.jobDetailsFromCompany}
-                          </Typography>
-                        </Box>
-                      </Modal>
-                    </CardContent>
-                  </div>
-                  <CardActions
-                    className="apply-btn"
-                    sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
-                  >
-                    <a href={job.jdLink} target="_blank">
-                      <Button size="small" sx={{ color: "#fff" }}>
-                        Click Here to Apply
-                      </Button>
-                    </a>
-                  </CardActions>
+                  <CardContentData job={job} />
                 </Card>
               </React.Fragment>
             );
@@ -162,85 +152,7 @@ const Jobs = ({ mount }) => {
                 return (
                   <React.Fragment key={job + index}>
                     <Card className="job-card" ref={lastJobElementRef}>
-                      <div className="job-body">
-                        <CardContent
-                          className="job-card-header"
-                          sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
-                        >
-                          <div className="job-logo">
-                            <img src={job.logoUrl} alt="logo" />
-                          </div>
-                          <div className="job__header">
-                            <span>{job.companyName}</span>
-                            <div className="job__header-subText">
-                              <span>
-                                {job.minExp.toString()}
-                                {"-"}
-                                {job.maxExp}
-                              </span>
-                              <span>{job.jobRole}</span>
-                            </div>
-                            <div className="job__header-subText">
-                              <span>
-                                <RiMoneyRupeeCircleLine />
-                                {job.minJdSalary
-                                  ? `${job.minJdSalary / 10}-${
-                                      job.maxJdSalary / 10
-                                    } LPA`
-                                  : `${job.maxJdSalary / 10} LPA`}
-                              </span>
-                              <span>
-                                <GrLocation />
-                                {job.location}
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                        <CardContent
-                          className="job-card-body"
-                          sx={{ margin: 0, padding: 0 }}
-                        >
-                          <div className="job-desc">
-                            <p>About us</p>
-                            <span>
-                              {job.jobDetailsFromCompany.slice(0, 100)}...
-                            </span>
-                            <button onClick={handleOpen}>View Job Desc</button>
-                          </div>
-                          <Modal
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                          >
-                            <Box sx={style}>
-                              <Typography
-                                id="modal-modal-title"
-                                variant="h6"
-                                component="h2"
-                              >
-                                Job Description
-                              </Typography>
-                              <Typography
-                                id="modal-modal-description"
-                                sx={{ mt: 2 }}
-                              >
-                                {job.jobDetailsFromCompany}
-                              </Typography>
-                            </Box>
-                          </Modal>
-                        </CardContent>
-                      </div>
-                      <CardActions
-                        className="apply-btn"
-                        sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
-                      >
-                        <a href={job.jdLink} target="_blank">
-                          <Button size="small" sx={{ color: "#fff" }}>
-                            Click Here to Apply
-                          </Button>
-                        </a>
-                      </CardActions>
+                      <CardContentData job={job} />
                     </Card>
                   </React.Fragment>
                 );
@@ -248,85 +160,7 @@ const Jobs = ({ mount }) => {
                 return (
                   <React.Fragment key={job + index}>
                     <Card className="job-card">
-                      <div className="job-body">
-                        <CardContent
-                          className="job-card-header"
-                          sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
-                        >
-                          <div className="job-logo">
-                            <img src={job.logoUrl} alt="logo" />
-                          </div>
-                          <div className="job__header">
-                            <span>{job.companyName}</span>
-                            <span>{job.jobRole}</span>
-                            <div className="job__header-subText">
-                              <span>
-                                <RiMoneyRupeeCircleLine />
-                                {job.minJdSalary
-                                  ? `${job.minJdSalary / 10}-${
-                                      job.maxJdSalary / 10
-                                    } LPA`
-                                  : `${job.maxJdSalary / 10} LPA`}
-                              </span>
-                              <span>
-                                {job.location === "remote" ? (
-                                  <>
-                                    <RiHome7Line /> {job.location}
-                                  </>
-                                ) : (
-                                  <>
-                                    <GrLocation /> {job.location}
-                                  </>
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                        <CardContent
-                          className="job-card-body"
-                          sx={{ margin: 0, padding: 0 }}
-                        >
-                          <div className="job-desc">
-                            <p>About us</p>
-                            <span>
-                              {job.jobDetailsFromCompany.slice(0, 100)}...
-                            </span>
-                            <button onClick={handleOpen}>View Job Desc</button>
-                          </div>
-                          <Modal
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                          >
-                            <Box sx={style}>
-                              <Typography
-                                id="modal-modal-title"
-                                variant="h6"
-                                component="h2"
-                              >
-                                Job Description
-                              </Typography>
-                              <Typography
-                                id="modal-modal-description"
-                                sx={{ mt: 2 }}
-                              >
-                                {job.jobDetailsFromCompany}
-                              </Typography>
-                            </Box>
-                          </Modal>
-                        </CardContent>
-                      </div>
-                      <CardActions
-                        className="apply-btn"
-                        sx={{ margin: 0, paddingLeft: 0, paddingRight: 0 }}
-                      >
-                        <a href={job.jdLink} target="_blank">
-                          <Button size="small" sx={{ color: "#fff" }}>
-                            Click Here to Apply
-                          </Button>
-                        </a>
-                      </CardActions>
+                      <CardContentData job={job} />
                     </Card>
                   </React.Fragment>
                 );
@@ -344,3 +178,7 @@ const Jobs = ({ mount }) => {
 };
 
 export default Jobs;
+
+CardContentData.propTypes = {
+  job: PropTypes.object.isRequired,
+};

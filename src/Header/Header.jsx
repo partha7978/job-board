@@ -1,23 +1,24 @@
 import "./header.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { addItem } from "../Store/jobSlice";
-import { clearItem, addFilteredItem, removeFilteredItem } from "../Store/jobSlice";
-import PropTypes  from "prop-types";
+import {
+  addFilteredItem,
+  removeFilteredItem,
+} from "../Store/jobSlice";
 
-const Header = ({ setMount }) => {
+const Header = () => {
   const dispatch = useDispatch();
   const [filteredJobs, setFilteredJobs] = useState([]);
   const jobs = useSelector((state) => state.jobs.items);
-  console.log()
+  console.log();
   const backupJobs = useSelector((state) => state.jobs.backupItems);
 
   const [filters, setFilters] = useState({
@@ -34,40 +35,57 @@ const Header = ({ setMount }) => {
     const newData = jobs[0]?.filter((job) => {
       return Object.entries(filters).every(([key, value]) => {
         if (key === "experience") {
-          return job.minExp === value;
+          if (value > 0) {
+            return job.minExp === value;
+          } else {
+            return true;
+          }
         }
         if (key === "remote") {
-          return job?.location.toLowerCase().includes(value.toLowerCase());
+          if (value === "remote") {
+            return job?.location.toLowerCase().includes(value.toLowerCase());
+          } else {
+            return true;
+          }
         }
         if (key === "companyName") {
-          return job.companyName.toLowerCase().includes(value.toLowerCase());
+          if (value.length > 0) {
+            return job.companyName.toLowerCase().includes(value.toLowerCase());
+          } else {
+            return true;
+          }
         }
         if (key === "location") {
-          return job.location.toLowerCase().includes(value.toLowerCase());
+          if (value.length > 0) {
+            return job.location.toLowerCase().includes(value.toLowerCase());
+          } else {
+            return true;
+          }
+        }
+        if (key === "techStack") {
+          if (value.length > 0) {
+            return job.jobRole.toLowerCase().includes(value.toLowerCase());
+          } else {
+            return true;
+          }
         }
         if (key === "role") {
-          return job.jobRole.toLowerCase().includes(value.toLowerCase());
+        if (value.length > 0) {
+            return job.jobRole.toLowerCase().includes(value.toLowerCase());
+           
+          } else {
+            return true;
+          }
         }
         return true;
       });
     });
-    // console.log(newData, "newData");
     setFilteredJobs(newData);
-    setMount(true);
   }, [filters]);
 
   useEffect(() => {
-    // console.log(filteredJobs, "filteredJobs------");
-    // if (!filters.clearItem) {
-      // console.log('working-------------')
-      // console.log(filteredJobs, "filteredJobs");
-      dispatch(addItem(filteredJobs));
-      dispatch(addFilteredItem(filteredJobs));
-      setMount(true);
-    // }
-    // else {
-    //   setMount(false);
-    // }
+    dispatch(addItem(filteredJobs));
+    dispatch(addFilteredItem(filteredJobs));
   }, [filteredJobs]);
 
   const handleExpChange = (event) => {
@@ -104,8 +122,6 @@ const Header = ({ setMount }) => {
       role: "",
       clearItem: true,
     });
-    // dispatch(clearItem());
-    setMount(true);
     dispatch(removeFilteredItem());
     dispatch(addItem(backupJobs[backupJobs.length - 1]));
   };
@@ -117,7 +133,7 @@ const Header = ({ setMount }) => {
           <Box sx={{ minWidth: 120, width: "200px" }}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label" className="input">
-                Min Experience
+                Min Exp.
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -186,9 +202,8 @@ const Header = ({ setMount }) => {
                 label="Tech Stack"
                 onChange={handleTechStack}
               >
-                <MenuItem value={"Remote"}>React</MenuItem>
-                <MenuItem value={"OnSite"}>Angular</MenuItem>
-                <MenuItem value={"Hybrid"}>Java</MenuItem>
+                <MenuItem value={"Android"}>Android</MenuItem>
+                <MenuItem value={"Ios"}>Ios</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -206,9 +221,9 @@ const Header = ({ setMount }) => {
                 label="Role"
                 onChange={handleRole}
               >
-                <MenuItem value={"Remote"}>Frontend</MenuItem>
-                <MenuItem value={"OnSite"}>Backend</MenuItem>
-                <MenuItem value={"Hybrid"}>FullStack</MenuItem>
+                <MenuItem value={"Frontend"}>Frontend</MenuItem>
+                <MenuItem value={"Backend"}>Backend</MenuItem>
+                <MenuItem value={"FullStack"}>FullStack</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -222,7 +237,3 @@ const Header = ({ setMount }) => {
 };
 
 export default Header;
-
-Header.propTypes = {
-  setMount: PropTypes.func.isRequired,
-};
