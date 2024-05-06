@@ -2,6 +2,8 @@
 ###  A job board made using ReactJS and Weekday API.
 <br>
 
+### [Live Link](https://job-board-app-parth.netlify.app/)
+
 ## Contributors
 
 - [Partha](https://www.github.com/partha7978)
