@@ -42,7 +42,7 @@ const Header = () => {
           }
         }
         if (key === "remote") {
-          if (value === "remote") {
+          if (value === "Remote") {
             return job?.location.toLowerCase().includes(value.toLowerCase());
           } else {
             return true;
